@@ -18,6 +18,7 @@ class EventDetailScreen extends StatefulWidget {
 class _EventDetailScreenState extends State<EventDetailScreen>
     with TickerProviderStateMixin {
   int iduser;
+  int idEvent;
   String participer = "Join Event";
   final currentUserController = Get.put(CurrentUserController());
   final double infoHeight = 364.0;
@@ -28,6 +29,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
   double opacity3 = 0.0;
   @override
   void initState() {
+    verifierParticipation();
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
     animation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
@@ -35,6 +37,29 @@ class _EventDetailScreenState extends State<EventDetailScreen>
         curve: Interval(0, 1.0, curve: Curves.fastOutSlowIn)));
     setData();
     super.initState();
+  }
+
+  verifierParticipation() async {
+    int a = widget.event.idEvenement;
+    print("currentUserController.currentUser.id.toString()");
+    print(currentUserController.currentUser.id.toString());
+    // final response = await http.post("http://192.168.1.47:1337/login", body: {
+    final response =
+        await http.post("http://192.168.1.5:1337/participant/verify", body: {
+      "id_user": currentUserController.currentUser.id.toString(),
+      "id_evenement": a.toString(),
+    });
+
+    final data = jsonDecode(response.body);
+
+    if (data == "vous pouvez participer") {
+      print("Check your password please !");
+    } else {
+      print("teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeesssssssssssssssssssssssssst");
+      setState(() {
+        this.participer = "Joined";
+      });
+    }
   }
 
   cancelParticipant(int idEvent) async {

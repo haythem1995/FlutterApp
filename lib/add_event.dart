@@ -5,6 +5,8 @@ import 'package:hello_flutter/bottom_navigation_view/fitness_app_home_screen.dar
 import 'package:hello_flutter/controllers/currentUserState.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class AddEvent extends StatefulWidget {
   const AddEvent({Key key, this.animationController}) : super(key: key);
@@ -17,6 +19,65 @@ class AddEvent extends StatefulWidget {
 class _AddEventState extends State<AddEvent> {
   int iduser;
   final currentUserController = Get.put(CurrentUserController());
+  File imageFile;
+  final picker = ImagePicker();
+
+  _openGallary(BuildContext context) async {
+    final picture = await picker.getImage(source: ImageSource.gallery);
+    this.setState(() {
+      imageFile = File(picture.path);
+    });
+    print(picture.path.toString());
+    print("object");
+    Navigator.of(context).pop();
+  }
+
+  _openCamera(BuildContext context) async {
+    final picture = await picker.getImage(source: ImageSource.camera);
+    this.setState(() {
+      imageFile = File(picture.path);
+    });
+    Navigator.of(context).pop();
+  }
+
+  Widget _decideImageView() {
+    if (imageFile == null) {
+      return Text("No Image Selected!");
+    } else {
+      return Image.file(
+        imageFile,
+        width: 400,
+        height: 100,
+      );
+    }
+  }
+
+  Future<void> _showChoiceDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Make a choice"),
+            content: SingleChildScrollView(
+              child: ListBody(children: <Widget>[
+                GestureDetector(
+                  child: Text("Galery"),
+                  onTap: () {
+                    _openGallary(context);
+                  },
+                ),
+                Padding(padding: EdgeInsets.all(8.0)),
+                GestureDetector(
+                  child: Text("Camera"),
+                  onTap: () {
+                    _openCamera(context);
+                  },
+                )
+              ]),
+            ),
+          );
+        });
+  }
 
   @override
   void initState() {
@@ -122,6 +183,13 @@ class _AddEventState extends State<AddEvent> {
                                 ]),
                             child: Column(
                               children: <Widget>[
+                                _decideImageView(),
+                                RaisedButton(
+                                  onPressed: () {
+                                    _showChoiceDialog(context);
+                                  },
+                                  child: Text("Select Image"),
+                                ),
                                 Container(
                                   padding: EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(

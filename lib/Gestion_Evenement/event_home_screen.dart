@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hello_flutter/Gestion_Evenement/calendar_popup_view.dart';
 import 'package:hello_flutter/Gestion_Evenement/event_list_view.dart';
 import 'package:hello_flutter/Gestion_Evenement/event_detail_screen.dart';
@@ -33,6 +33,11 @@ class _EventHomeScreenState extends State<EventHomeScreen>
         duration: const Duration(milliseconds: 1000), vsync: this);
     getEventList();
     super.initState();
+  }
+
+  getEventId(int idEvent) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('intValue', idEvent);
   }
 
   getEventList() async {
@@ -259,15 +264,15 @@ class _EventHomeScreenState extends State<EventHomeScreen>
               ],
             ),
           ),
-          Padding(
+/*           Padding(
             padding: const EdgeInsets.only(right: 8),
             child: Container(
               width: 1,
               height: 42,
               color: Colors.grey.withOpacity(0.8),
             ),
-          ),
-          Expanded(
+          ), */
+/*           Expanded(
             child: Row(
               children: <Widget>[
                 Material(
@@ -314,7 +319,7 @@ class _EventHomeScreenState extends State<EventHomeScreen>
                 ),
               ],
             ),
-          ),
+          ), */
         ],
       ),
     );
@@ -438,7 +443,7 @@ class _EventHomeScreenState extends State<EventHomeScreen>
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      '530 hotels found',
+                      '5 Events found',
                       style: TextStyle(
                         fontWeight: FontWeight.w100,
                         fontSize: 16,

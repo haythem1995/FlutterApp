@@ -6,7 +6,6 @@ import 'package:hello_flutter/bottom_navigation_view/fitness_app_home_screen.dar
 import 'package:hello_flutter/navigation_home_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'controllers/currentUserState.dart';
 
 class Login extends StatefulWidget {
@@ -24,8 +23,8 @@ class _LoginState extends State<Login> {
   login() async {
     // final response = await http.post("http://192.168.1.47:1337/login", body: {
     final response = await http.post("http://192.168.1.5:1337/login", body: {
-      "email": 'String',
-      "password": 'String',
+      "email": this.email,
+      "password": this.password,
     });
 
     final data = jsonDecode(response.body);
