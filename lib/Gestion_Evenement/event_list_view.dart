@@ -3,8 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hello_flutter/Gestion_Evenement/hotel_app_theme.dart';
 import 'package:hello_flutter/model/event_model.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class EventListView extends StatelessWidget {
+class EventListView extends StatefulWidget {
   const EventListView(
       {Key key,
       this.hotelData,
@@ -19,22 +20,47 @@ class EventListView extends StatelessWidget {
   final Animation<dynamic> animation;
 
   @override
+  _EventListViewState createState() => _EventListViewState();
+}
+
+class _EventListViewState extends State<EventListView> {
+  //double rating;
+
+  @override
+  void initState() {
+    getDoubleValuesSF();
+
+    super.initState();
+  }
+
+  getDoubleValuesSF() async {
+    double rating;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return double
+    double ratingValue = prefs.getDouble('ratingValue');
+    setState(() {
+      rating = ratingValue;
+    });
+    return rating;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: animationController,
+      animation: widget.animationController,
       builder: (BuildContext context, Widget child) {
         return FadeTransition(
-          opacity: animation,
+          opacity: widget.animation,
           child: Transform(
             transform: Matrix4.translationValues(
-                0.0, 50 * (1.0 - animation.value), 0.0),
+                0.0, 50 * (1.0 - widget.animation.value), 0.0),
             child: Padding(
               padding: const EdgeInsets.only(
                   left: 24, right: 24, top: 8, bottom: 16),
               child: InkWell(
                 splashColor: Colors.transparent,
                 onTap: () {
-                  callback();
+                  widget.callback();
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -56,7 +82,7 @@ class EventListView extends StatelessWidget {
                             AspectRatio(
                               aspectRatio: 2,
                               child: Image.asset(
-                                hotelData.photoEvenement,
+                                widget.hotelData.photoEvenement,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -79,7 +105,7 @@ class EventListView extends StatelessWidget {
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
-                                              hotelData.nomEvenement,
+                                              widget.hotelData.nomEvenement,
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w600,
@@ -93,7 +119,7 @@ class EventListView extends StatelessWidget {
                                                   MainAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                  hotelData.infoline,
+                                                  widget.hotelData.infoline,
                                                   style: TextStyle(
                                                       fontSize: 14,
                                                       color: Colors.grey
@@ -111,7 +137,7 @@ class EventListView extends StatelessWidget {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    '${hotelData.distanceEvenement} km to walk',
+                                                    '${widget.hotelData.distanceEvenement} km to walk',
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: TextStyle(
@@ -130,9 +156,16 @@ class EventListView extends StatelessWidget {
                                                   SmoothStarRating(
                                                     allowHalfRating: true,
                                                     starCount: 5,
-                                                    rating: hotelData
-                                                        .difficulteEvenement
-                                                        .toDouble(),
+                                                    onRated: (value) async {
+                                                      SharedPreferences prefs =
+                                                          await SharedPreferences
+                                                              .getInstance();
+                                                      prefs.setDouble(
+                                                          'ratingValue', value);
+                                                      print(
+                                                          "rating value -> $value");
+                                                    },
+                                                    //rating: rating,
                                                     size: 20,
                                                     color: HotelAppTheme
                                                             .buildLightTheme()
@@ -142,7 +175,7 @@ class EventListView extends StatelessWidget {
                                                         .primaryColor,
                                                   ),
                                                   Text(
-                                                    ' ${hotelData.nbplaceEvenement} Disponibale Place',
+                                                    ' ${widget.hotelData.nbplaceEvenement} Disponibale Place',
                                                     style: TextStyle(
                                                         fontSize: 14,
                                                         color: Colors.grey
@@ -166,7 +199,7 @@ class EventListView extends StatelessWidget {
                                           CrossAxisAlignment.end,
                                       children: <Widget>[
                                         Text(
-                                          '${hotelData.prixEvenement}dt',
+                                          '${widget.hotelData.prixEvenement}dt',
                                           textAlign: TextAlign.left,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,

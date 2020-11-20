@@ -5,6 +5,7 @@ import 'package:hello_flutter/Gestion_Evenement/design_event_app_theme.dart';
 import 'package:hello_flutter/bottom_navigation_view/fitness_app_home_screen.dart';
 import 'package:hello_flutter/model/event_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class EventDetailScreen extends StatefulWidget {
@@ -19,6 +20,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
     with TickerProviderStateMixin {
   int iduser;
   int idEvent;
+  String rate;
   String participer = "Join Event";
   final currentUserController = Get.put(CurrentUserController());
   final double infoHeight = 364.0;
@@ -30,6 +32,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
   @override
   void initState() {
     verifierParticipation();
+    getDoubleValuesSF();
     animationController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
     animation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
@@ -37,6 +40,17 @@ class _EventDetailScreenState extends State<EventDetailScreen>
         curve: Interval(0, 1.0, curve: Curves.fastOutSlowIn)));
     setData();
     super.initState();
+  }
+
+  getDoubleValuesSF() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return double
+    double ratingValue = prefs.getDouble('ratingValue');
+    setState(() {
+      rate = ratingValue.toString();
+    });
+    print(rate);
+    return ratingValue;
   }
 
   verifierParticipation() async {
@@ -216,8 +230,9 @@ class _EventDetailScreenState extends State<EventDetailScreen>
                                   child: Row(
                                     children: <Widget>[
                                       Text(
-                                        eventModel.difficulteEvenement
-                                            .toString(),
+/*                                         eventModel.difficulteEvenement
+                                            .toString(), */
+                                        this.rate.toString(),
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                           fontWeight: FontWeight.w200,

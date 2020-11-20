@@ -91,8 +91,7 @@ class _RegisterState extends State<Register> {
   Future<void> registration() async {
     print(name);
     // final response = await http.post("http://192.168.23.1:1337/login", body: {
-    final response =
-        await http.post("http://192.168.1.47:1337/register", body: {
+    final response = await http.post("http://192.168.1.5:1337/register", body: {
       "email": this.email,
       "password": this.password,
       "name": this.name,
